@@ -104,14 +104,14 @@ class GradingManager {
     }
 
     public static void viewAllGrades() {
-        System.out.println("\n📊 Grade Report:");
+        System.out.println("\n Grade Report:");
         for (Grade g : grades) {
             g.display();
         }
     }
 
     public static void viewToDoList() {
-        System.out.println("\n📝 Grading To-Do List:");
+        System.out.println("\n Grading To-Do List:");
         for (Assignment a : assignments) {
             if (!a.isGraded()) {
                 a.displayStatus();
@@ -120,7 +120,7 @@ class GradingManager {
     }
 
     public static void viewAssignmentStatus() {
-        System.out.println("\n📅 All Assignments:");
+        System.out.println("\n All Assignments:");
         for (Assignment a : assignments) {
             a.displayStatus();
         }
@@ -164,14 +164,14 @@ class AttendanceManager {
     }
 
     public static void viewAllAttendance() {
-        System.out.println("\n📋 All Attendance Records:");
+        System.out.println("\n All Attendance Records:");
         for (AttendanceRecord record : records) {
             System.out.println(" - " + record);
         }
     }
 
     public static void viewAttendanceByStudent(Student student) {
-        System.out.println("\n📅 Attendance for " + student.getName() + ":");
+        System.out.println("\n Attendance for " + student.getName() + ":");
         for (AttendanceRecord record : records) {
             if (record.getStudent().equals(student)) {
                 System.out.println(" - " + record);
@@ -192,7 +192,7 @@ class ScheduleManager {
     public static void showTodaySchedule() {
         int index = LocalDate.now().getDayOfYear() % rotationSchedule.size();
         Course today = rotationSchedule.get(index);
-        System.out.println("📅 Today's course: " + today.getTitle());
+        System.out.println(" Today's course: " + today.getTitle());
     }
 }
 

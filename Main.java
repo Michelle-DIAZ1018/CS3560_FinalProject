@@ -1,59 +1,47 @@
-// MAIN
-
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
+import java.time.LocalDateTime;
 
 public class Main {
     public static void main(String[] args) {
-        // Create users
-        Student alice = new Student("S001", "Alice");
-        Instructor bob = new Instructor("I001", "Bob");
-        SubstituteInstructor carol = new SubstituteInstructor("SI001", "Carol");
+        // Create instructor and calendar
+        Instructor instructor = new Instructor("I123", "Ms. Johnson");
+        SchoolCalendar calendar = new SchoolCalendar();
 
-        // Dashboards
-        alice.viewDashboard();
-        bob.viewDashboard();
-        carol.viewDashboard();
+        // Instructor creates a course
+        instructor.createCourse("Math 101", "Mathematics", LocalDateTime.of(2025, 5, 15, 10, 0), "Room 12A");
+        Course mathCourse = instructor.getCourses().get(0);
 
-        // Authorization examples
-        Authorization.checkAccess(alice, "submit_assignment");
-        Authorization.checkAccess(bob, "create_course");
-        Authorization.checkAccess(carol, "submit_assignment");
+        // Create student and enroll
+        Student student = new Student("S456", "Alex Carter");
+        student.enrollInCourse(mathCourse);
 
-        // Instructor creates course
-        bob.createCourse("C101", "Intro to Java");
+        // Instructor creates an assignment
+        instructor.createAssignment(mathCourse, "Algebra Homework", "Math", "2025-05-20", 100);
 
-        // View courses
-        bob.manageCourses();
-        carol.viewAllCourses();
+        // Student views and submits assignment
+        student.viewAssignments(mathCourse);
+        student.submitAssignment(mathCourse, "Algebra Homework", "Solved all equations.");
 
-        // Assignments
-        GradingManager.addAssignment("Project 1", LocalDate.of(2025, 5, 10));
-        GradingManager.viewAssignmentStatus();
+        // Instructor grades the submission
+        instructor.viewSubmissions(mathCourse, "Algebra Homework");
+        instructor.gradeAssignmentSubmission(mathCourse, "Alex Carter", "Algebra Homework", 95, "Excellent work!");
 
-        // Submission
-        List<String> content = List.of("Main.java", "README.md");
-        Submission sub = new Submission(alice, "Project 1", content);
-        AssignmentManager.submitAssignment(sub);
+        // Student views feedback
+        student.viewFeedback(mathCourse, "Algebra Homework");
 
-        // Feedback
-        sub.addFeedback("Well done!");
-        sub.viewSubmission();
+        // Attendance actions
+        mathCourse.getAttendanceManager().addStudent(student.getId(), student.getName());
+        instructor.takeAttendance(mathCourse, "Alex Carter");
+        instructor.endAttendance(mathCourse, "Alex Carter", true);
+        instructor.finalizeAttendance(mathCourse);
+        mathCourse.getAttendanceManager().printDailyAttendance();
+        mathCourse.getAttendanceManager().printAbsenceReport();
 
-        // Grading
-        GradingManager.assignGrade(alice, "Project 1", 92.5);
-        GradingManager.viewAllGrades();
-        GradingManager.viewToDoList();
+        // Add and view calendar events
+        instructor.addEventToCalendar(calendar, "Midterm Exam", LocalDateTime.of(2025, 5, 25, 9, 0));
+        student.viewCalendarEvents(calendar);
 
-        // Calendar
-        UserCalendar.addEvent("Lecture 1", LocalDate.of(2025, 5, 6), true, bob);
-        UserCalendar.viewEvents(alice);
-
-        // Attendance
-        AttendanceRecord record = AttendanceManager.checkIn(alice, "Lecture");
-        AttendanceManager.checkOut(record);
-        AttendanceManager.viewAttendanceByStudent(alice);
+        // View dashboards
+        instructor.viewDashboard();
+        student.viewDashboard();
     }
 }
-

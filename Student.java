@@ -107,22 +107,5 @@ public class Student extends TemplateUser {
     public List<AssignmentSubmission> getSubmissions() {
         return submissions;
     }
-
-    private Assignment findAssignmentByTitle(Course course, String title) {
-        for (Assignment a : course.getAssignmentManager().getAssignments()) {
-            if (a.getTitle().equalsIgnoreCase(title)) {
-                return a;
-            }
-        }
-        return null;
-    }
-
-    private AssignmentSubmission findSubmissionByAssignment(Course course, String title) {
-        for (AssignmentSubmission submission : submissions) {
-            if (submission.getAssignment().getTitle().equalsIgnoreCase(title)) {
-                return submission;
-            }
-        }
-        return null;
-    }
 }
+

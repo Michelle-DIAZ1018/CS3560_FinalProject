@@ -43,17 +43,6 @@ public class Instructor extends TemplateUser {
         }
     }
 
-    // Display course details by title
-    public void displayCourseDetailsByTitle(String title) {
-        for (Course course : courses) {
-            if (course.getTitle().equalsIgnoreCase(title)) {
-                course.displayCourseDetails();
-                return;
-            }
-        }
-        System.out.println("Course not found.");
-    }
-
     // === ASSIGNMENT MANAGEMENT ===
 
     public void createAssignment(Course course, String title, String subject, String deadline, int pointValue) {
@@ -83,14 +72,6 @@ public class Instructor extends TemplateUser {
         }
     }
 
-    private AssignmentSubmission findSubmissionByStudentAndAssignment(Course course, String studentName, String assignmentTitle) {
-        for (AssignmentSubmission submission : course.getAssignmentManager().getSubmissionsForAssignment(assignmentTitle)) {
-            if (submission.getStudent().getName().equalsIgnoreCase(studentName)) {
-                return submission;
-            }
-        }
-        return null;
-    }
 
     // === ATTENDANCE MANAGEMENT ===
 

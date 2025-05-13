@@ -201,7 +201,7 @@ public class AuthorizationGUI {
             JButton contactButton = new JButton("Contact");
 
             JButton[] instructorButtons = {
-                mathButton, englishButton, historyButton, scienceButton, createCourseButton, contactButton
+                    mathButton, englishButton, historyButton, scienceButton, createCourseButton, contactButton
             };
 
             instructorPanel.add(Box.createVerticalGlue());

@@ -1,111 +1,300 @@
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Student extends TemplateUser {
-    private int absenceCount;
-    private List<AssignmentSubmission> submissions;
-    private List<Course> enrolledCourses;
+// Student class
+public class Student extends TemplateUser implements
+        AssignmentSubmissionInterface,
+        CourseInterface,
+        SchoolCalendarInterface {
+
+    private List<AssignmentInterface> assignments = new ArrayList<>();
+    private List<String> events = new ArrayList<>();
+    private String submissionText;
+    private int grade;
+    private String feedback;
+    private AssignmentInterface currentAssignment;
+    private CourseInterface currentCourse;
 
     public Student(String id, String name) {
         super(id, name, Role.STUDENT);
-        this.absenceCount = 0;
-        this.submissions = new ArrayList<>();
-        this.enrolledCourses = new ArrayList<>();
     }
 
-    // Add a course to student's enrolled list
-    public void enrollInCourse(Course course) {
-        enrolledCourses.add(course);
-    }
-
-    // View all enrolled courses
-    public void viewEnrolledCourses() {
-        System.out.println("Courses enrolled by " + this.getName() + ":");
-        if (enrolledCourses.isEmpty()) {
-            System.out.println("No courses enrolled.");
-        } else {
-            for (Course course : enrolledCourses) {
-                System.out.println("- " + course.getTitle());
-            }
-        }
-    }
-
-    // View details for a specific enrolled course
-    public void viewCourseDetailsByTitle(String title) {
-        for (Course course : enrolledCourses) {
-            if (course.getTitle().equalsIgnoreCase(title)) {
-                course.displayCourseDetails();  // assuming this method is safe for students
-                return;
-            }
-        }
-        System.out.println("Course not found.");
-    }
-
-    // Dashboard view for students
+    // -------------------- TemplateUser --------------------
     @Override
     public void viewDashboard() {
-        System.out.println("Student Dashboard:");
-        System.out.println("(1) View assignments and submissions");
-        System.out.println("(2) View grades");
-        System.out.println("(3) View calendar");
-        System.out.println("(4) View enrolled courses");
+        System.out.println("Welcome to the Student Dashboard, " + name);
     }
 
-    // Absence tracking
-    public int getAbsenceCount() {
-        return absenceCount;
+    // -------------------- AssignmentSubmissionInterface --------------------
+    @Override
+    public Student getStudent() {
+        return this;
     }
 
-    public void incrementAbsence() {
-        absenceCount++;
+    @Override
+    public AssignmentInterface getAssignment() {
+        return currentAssignment;
     }
 
-    // Assignment management
-    public void viewAssignments(Course course) {
-        System.out.println("Assignments for " + course.getTitle() + ":");
-        for (Assignment a : course.getAssignmentManager().getAssignments()) {
-            System.out.println(a);
+    @Override
+    public String getSubmissionText() {
+        return submissionText;
+    }
+
+    @Override
+    public int getGrade() {
+        return grade;
+    }
+
+    @Override
+    public String getFeedback() {
+        return feedback;
+    }
+
+    @Override
+    public void setGrade(int grade) {
+        this.grade = grade;
+    }
+
+    @Override
+    public void setFeedback(String feedback) {
+        this.feedback = feedback;
+    }
+
+    @Override
+    public void setSubmissionText(String newSubmissionText) {
+        this.submissionText = newSubmissionText;
+    }
+
+    @Override
+    public void createAssignment(String course, String title, String subject, String deadline, int pointValue) {
+
+    }
+
+    @Override
+    public void listCourseAssignments(String course) {
+        System.out.println("Assignments for course: " + course);
+        for (AssignmentInterface a : assignments) {
+            System.out.println(" - " + a.getTitle());
         }
     }
 
-    public void submitAssignment(Course course, String assignmentTitle, String submissionText) {
-        Assignment assignment = findAssignmentByTitle(course, assignmentTitle);
-        if (assignment != null) {
-            AssignmentSubmission submission = new AssignmentSubmission(this, assignment, submissionText);
-            submissions.add(submission);
-            System.out.println("Submission for \"" + assignmentTitle + "\" has been submitted.");
+    @Override
+    public void viewGrades(String courseForGrade) {
+
+    }
+
+    @Override
+    public void submitAssignment(String assignmentTitle, String assignmentDesc) {
+        if (currentAssignment != null) {
+            System.out.println("Submitting assignment: " + assignmentTitle);
+            setSubmissionText(assignmentDesc);
+            currentAssignment.submit(this);
+            System.out.println("Assignment submitted.");
         } else {
-            System.out.println("Assignment not found.");
+            System.out.println("No assignment found to submit.");
         }
     }
 
-    public void resubmitAssignment(Course course, String assignmentTitle, String newSubmissionText) {
-        AssignmentSubmission submission = findSubmissionByAssignment(course, assignmentTitle);
-        if (submission != null) {
-            submission.setSubmissionText(newSubmissionText);
-            System.out.println("Resubmission for \"" + assignmentTitle + "\" has been made.");
+
+    public void resubmitAssignment(String assignmentTitle, String newAssignmentDesc) {
+        if (currentAssignment != null) {
+            setSubmissionText(newAssignmentDesc);
+            currentAssignment.submit(this);
+            System.out.println("Assignment resubmitted.");
         } else {
-            System.out.println("No submission found for assignment: " + assignmentTitle);
+            System.out.println("No assignment found to resubmit.");
         }
     }
 
-    public void viewFeedback(Course course, String assignmentTitle) {
-        AssignmentSubmission submission = findSubmissionByAssignment(course, assignmentTitle);
-        if (submission != null) {
-            System.out.println("Feedback for \"" + assignmentTitle + "\":");
-            System.out.println("Grade: " + submission.getGrade());
-            System.out.println("Feedback: " + submission.getFeedback());
+    // -------------------- CourseInterface --------------------
+    @Override
+    public String getTitle() {
+        return currentCourse != null ? currentCourse.getTitle() : "No Course";
+    }
+
+    @Override
+    public String getSubject() {
+        return currentCourse != null ? currentCourse.getSubject() : "No Subject";
+    }
+
+    @Override
+    public LocalDateTime getTime() {
+        return currentCourse != null ? currentCourse.getTime() : LocalDateTime.now();
+    }
+
+    @Override
+    public String getLocation() {
+        return currentCourse != null ? currentCourse.getLocation() : "Unknown";
+    }
+
+    @Override
+    public Instructor getInstructor() {
+        return currentCourse != null ? currentCourse.getInstructor() : null;
+    }
+
+    @Override
+    public AttendanceManagerInterface getAttendanceManager() {
+        return null;  // Not needed for Student
+    }
+
+    @Override
+    public void viewCourseDetailsByTitle(String title) {
+        if (currentCourse != null && currentCourse.getTitle().equals(title)) {
+            displayCourseDetails();
         } else {
-            System.out.println("No submission found for assignment: " + assignmentTitle);
+            System.out.println("Course not found.");
         }
     }
 
-    public void viewCalendarEvents(SchoolCalendar calendar) {
-        calendar.viewEvents();
+    @Override
+    public void displayCourseDetails() {
+        if (currentCourse != null) {
+            System.out.println("Course Title: " + getTitle());
+            System.out.println("Course Subject: " + getSubject());
+            System.out.println("Course Time: " + getTime());
+            System.out.println("Course Location: " + getLocation());
+            System.out.println("Instructor: " + getInstructor().getName());
+        }
     }
 
-    public List<AssignmentSubmission> getSubmissions() {
-        return submissions;
+    @Override
+    public void viewEnrolledCourses() {
+        if (currentCourse != null) {
+            System.out.println("You are enrolled in: " + getTitle());
+        } else {
+            System.out.println("You are not enrolled in any course.");
+        }
+    }
+
+    @Override
+    public void enrollInCourse() {
+
+    }
+
+    @Override
+    public void createCourse(String title, String subject, LocalDateTime time, String location) {
+
+    }
+
+    @Override
+    public void displayCourses() {
+
+    }
+
+    // -------------------- SchoolCalendarInterface --------------------
+    @Override
+    public void addEvent(Instructor teacher, String name, LocalDateTime dateTime) {
+        // Students don't add events
+        System.out.println("You do not have permission to add events.");
+    }
+
+    @Override
+    public void editEvent(Instructor teacher, String event, String newName, LocalDateTime newDateTime) {
+        // Students don't edit events
+        System.out.println("You do not have permission to edit events.");
+    }
+
+    @Override
+    public void viewEvents() {
+        System.out.println("School Events:");
+        for (String event : events) {
+            System.out.println(event);
+        }
+    }
+
+    // -------------------- Supporting Inner Classes --------------------
+    private class Assignment implements AssignmentInterface {
+        private String title;
+        private String subject;
+        private LocalDate deadline;
+        private int pointValue;
+        private CourseInterface course;
+
+        public Assignment(String title, String subject, LocalDate deadline, int pointValue, CourseInterface course) {
+            this.title = title;
+            this.subject = subject;
+            this.deadline = deadline;
+            this.pointValue = pointValue;
+            this.course = course;
+        }
+
+        public String getTitle() { return title; }
+        public String getSubject() { return subject; }
+        public LocalDate getDeadline() { return deadline; }
+        public int getPointValue() { return pointValue; }
+        public CourseInterface getCourse() { return course; }
+
+        @Override
+        public void submit(Student student) {
+            // Submission logic for student
+        }
+    }
+
+    private class Course implements CourseInterface {
+        private String title;
+        private String subject;
+        private LocalDateTime time;
+        private String location;
+        private Instructor instructor;
+
+        public Course(String title, String subject, LocalDateTime time, String location, Instructor instructor) {
+            this.title = title;
+            this.subject = subject;
+            this.time = time;
+            this.location = location;
+            this.instructor = instructor;
+        }
+
+        public String getTitle() {
+            return title;
+        }
+        public String getSubject() {
+            return subject;
+        }
+        public LocalDateTime getTime() {
+            return time;
+        }
+        public String getLocation() {
+            return location;
+        }
+        public Instructor getInstructor() {
+            return instructor;
+        }
+        public AttendanceManagerInterface getAttendanceManager() {
+            return null; // Not needed for Student
+        }
+
+        @Override
+        public void viewCourseDetailsByTitle(String title) {
+
+        }
+
+        @Override
+        public void displayCourseDetails() {
+
+        }
+
+        @Override
+        public void viewEnrolledCourses() {
+
+        }
+
+        @Override
+        public void enrollInCourse() {
+
+        }
+
+        @Override
+        public void createCourse(String title, String subject, LocalDateTime time, String location) {
+
+        }
+
+        @Override
+        public void displayCourses() {
+
+        }
     }
 }
-
